@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  keycloak:
+    image: jboss/keycloak
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+      - 8443:8443
+    environment:
+      - KEYCLOAK_USER=${KEYCLOAK_USER}
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+      - KEYCLOAK_IMPORT=/data/import/realm-export.json
+    volumes:
+      - ./keycloak/realm-export.json:/data/import/realm-export.json
+    networks:
+      - local-keycloak
+    #entrypoint: /tmp/init.sh
+
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - local-keycloak
+
+networks:
+  local-keycloak:
+    driver: bridge
+
+
