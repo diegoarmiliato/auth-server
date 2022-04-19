@@ -69,12 +69,12 @@ else
   echo "  provider dinamica" >> /etc/network/interfaces
   echo rules added
 fi
-echo \>UFW Firewall Reload
 
 echo ""
 echo =========================================================
 echo \>Creating VPN Reconnection CRON Job
 echo =========================================================
+chmod +x ./vpn/vpn-reconnect.sh
 if crontab -l | grep -e "vpn-reconnect";
 then
   echo job already configured

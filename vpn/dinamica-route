@@ -1,2 +1,2 @@
-#!/usr/bin/env bash
+#!/bin/sh
 route add -net 192.168.0.200/255 dev ppp0
