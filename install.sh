@@ -5,14 +5,6 @@
 # VPN_PASSWORD (password for VPN Connection)
 # KEYCLOAK_USER (admin user for Keycloak Interface)
 # KEYCLOAK_PASSWORD (admin password for Keycloak Interface)
-
-# echo \>Switching to user Home folder
-# cd ~
-
-# echo \>Cloning auth-server git repository
-# git clone https://github.com/diegoarmiliato/auth-server.git
-
-# cd ~/auth-server
 echo ""
 echo =========================================================
 echo \>Reading needed VPN Configuration Data
@@ -46,13 +38,7 @@ echo ""
 echo =========================================================
 echo \>Adding Firewall Rules to UFW
 echo =========================================================
-if grep -qe "-A ufw-before-input -p 47 -j ACCEPT" /etc/ufw/before.rules;
-then
-  echo rules already added
-else
-  sed -i "s:# don't delete the 'COMMIT': # allow PPTP VPN\n-A ufw-before-input -p 47 -j ACCEPT\n-A ufw-before-output -p 47 -j ACCEPT\n\n# don't delete the 'COMMIT':" /etc/ufw/before.rules
-  echo rules added
-fi
+ufw allow 1723
 echo \>UFW Firewall Reload
 ufw reload
 
