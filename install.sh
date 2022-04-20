@@ -91,6 +91,15 @@ echo KEYCLOAK_PASSWORD=$KEYCLOAK_PASSWORD>>.env
 
 echo ""
 echo =========================================================
+echo \>Making first Certificate Acquisition with Mock Nginx
+echo =========================================================
+cp ./nginx/first.conf ./nginx/default.conf
+docker-compose run 
+docker-compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d auth.dinamicacp.com
+cp ./nginx/last.conf ./nginx/default.conf
+
+echo ""
+echo =========================================================
 echo \>Creating Docker Container for KeyCloak
 echo =========================================================
 docker-compose --env-file .env up --detach
