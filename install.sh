@@ -60,14 +60,15 @@ echo ""
 echo =========================================================
 echo \>Creating VPN Reconnection CRON Job
 echo =========================================================
-chmod +x ./vpn/vpn-reconnect.sh
+cp ./vpn/vpn-reconnect.sh ~/vpn-reconnect.sh
+chmod +x ~/vpn-reconnect.sh
 if crontab -l | grep -e "vpn-reconnect";
 then
   echo job already configured
 else
   echo "SHELL=/bin/sh" | crontab -
   (crontab -l 2>/dev/null || true; echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin") | crontab -
-  (crontab -l 2>/dev/null || true; echo "* * * * * /root/auth-server/vpn/vpn-reconnect.sh") | crontab -
+  (crontab -l 2>/dev/null || true; echo "* * * * * /root/vpn-reconnect.sh") | crontab -
   echo job configured
 fi
 
@@ -94,9 +95,23 @@ echo =========================================================
 echo \>Making first Certificate Acquisition with Mock Nginx
 echo =========================================================
 cp ./nginx/first.conf ./nginx/default.conf
-docker-compose run 
-docker-compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d auth.dinamicacp.com
-cp ./nginx/last.conf ./nginx/default.conf
+docker-compose up -d nginx 
+docker-compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d auth.dinamicacp.com
+docker-compose down
+cp ./nginx/final.conf ./nginx/default.conf
+
+echo ""
+echo =========================================================
+echo \>Creating Certificate Renewall CRON Job
+echo =========================================================
+chmod +x ./vpn/vpn-reconnect.sh
+if crontab -l | grep -e "certbot";
+then
+  echo job already configured
+else
+  (crontab -l 2>/dev/null || true; echo "0 1 * * * docker-compose -f /root/auth-server/docker-compose.yml run --rm certbot renew >> /var/log/cert-renewall.log 2>&1") | crontab -
+  echo job configured
+fi
 
 echo ""
 echo =========================================================
